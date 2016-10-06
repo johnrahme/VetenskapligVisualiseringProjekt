@@ -44,18 +44,18 @@ def readPoints(file):
     # Loop through lines
     while line:
         # Split the line into data
-        data = line.split(';')
+        data = line.split('|')
         # Skip the commented lines
         if data and data[0][0] != '#':
             # Convert data into float
-            print data[0], data[1], data[2], data[3], data[4].split('--')[0]
-            date, x, y, z, r = data[0].rstrip(';'), float(data[1].rstrip(';')), float(data[2].rstrip(';')),  float(data[3].rstrip(';')), float(data[4].split('--')[0])
-            row=string.split(date);
+            print data[1], data[2], data[3], data[4], data[10].split('--')[0]
+            date, x, y, z, r = data[1].rstrip(';'), float(data[2].rstrip(';')), float(data[3].rstrip(';')),  float(data[4].rstrip(';')), float(data[10].split('--')[0])
+            row=string.split(date,'T');
             adate=row[0].split('-')
             atime=row[1].split(':')
             temp=atime[2].split('.')
             atime[2]=temp[0];
-
+            
             if atime[2]=='':
                 atime[2]='00'
             t= time.mktime([int(adate[0]),int(adate[1]),int(adate[2]),int(atime[0]),int(atime[1]),int(atime[2]),0,0,0])

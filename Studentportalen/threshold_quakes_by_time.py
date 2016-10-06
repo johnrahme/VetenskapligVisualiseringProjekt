@@ -12,7 +12,7 @@ import ReadPointsCSV
 import vtk
 
 # Load the earthquake data
-points, strength, time_, = ReadPointsCSV.readPoints("events3.csv")
+points, strength, time_, = ReadPointsCSV.readPoints("data.txt")
 min_strength, max_strength = strength.GetRange()
 min_time, max_time = time_.GetRange()  # in seconds
 
@@ -35,7 +35,7 @@ points_polydata.GetPointData().SetActiveScalars("strength")
 # comment out the SetInputArrayToProcess() call, the thresholding will
 # be performed on the active scalar array ("strength", in this case).
 threshold_filter = vtk.vtkThresholdPoints()
-threshold_filter.SetInput(points_polydata)
+threshold_filter.SetInputData(points_polydata)
 threshold_filter.ThresholdBetween(min_time, max_time)
 threshold_filter.SetInputArrayToProcess(0, 0, 0, 0, "time")
 threshold_filter.Update()
