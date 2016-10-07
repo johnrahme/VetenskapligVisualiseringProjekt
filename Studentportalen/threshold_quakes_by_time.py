@@ -44,8 +44,26 @@ class KeyboardInterface(object):
             self.new_strength = strength
             for index in range(size):
                 #print 'strength = ' , self.new_strength[index]
-                if self.new_strength.GetValue(index) < 6:
+                if self.new_strength.GetValue(index) < 7:
                     self.new_strength.SetValue(index,0) 
+            self.new_strength.SetName("new_strength")               
+            points_polydata.GetPointData().SetActiveScalars("new_strength")
+            threshold_filter.Update()
+            self.render_window.Render()
+            
+        elif key == "Right":      
+            self.new_strength = strength
+            for index in range(size):
+                #print 'strength = ' , self.new_strength[index]
+                if self.new_strength.GetValue(index) > 5:
+                    self.new_strength.SetValue(index,0) 
+            self.new_strength.SetName("new_strength")               
+            points_polydata.GetPointData().SetActiveScalars("new_strength")
+            threshold_filter.Update()
+            self.render_window.Render()
+            
+        elif key == "1":      
+            self.new_strength = strength
             self.new_strength.SetName("new_strength")               
             points_polydata.GetPointData().SetActiveScalars("new_strength")
             threshold_filter.Update()
