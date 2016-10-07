@@ -4,7 +4,7 @@ import vtk
 #------------------------Start KeyBoard interface------------------------------
 
 class KeyboardInterface(object):
-   
+    global size, strength, min_strength
     def __init__(self):
         self.screenshot_counter = 0
         self.day_in_sec = 86400
@@ -12,6 +12,7 @@ class KeyboardInterface(object):
         self.render_window = None
         self.window2image_filter = None
         self.png_writer = None
+        self.new_strength = strength   
         
     def keypress(self, obj, event):
         key = obj.GetKeySym()
@@ -39,6 +40,16 @@ class KeyboardInterface(object):
             threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
             threshold_filter.Update()
             self.render_window.Render()
+        elif key == "Left":      
+            self.new_strength = strength
+            for index in range(size):
+                #print 'strength = ' , self.new_strength[index]
+                if self.new_strength.GetValue(index) < 6:
+                    self.new_strength.SetValue(index,0) 
+            self.new_strength.SetName("new_strength")               
+            points_polydata.GetPointData().SetActiveScalars("new_strength")
+            threshold_filter.Update()
+            self.render_window.Render()
 
 #--------------------------End KeyBoard interface------------------------------
 
@@ -48,7 +59,8 @@ class KeyboardInterface(object):
 points, strength, time_, = ReadPointsCSV.readPoints("Quake_data.txt")
 min_strength, max_strength = strength.GetRange()
 min_time, max_time = time_.GetRange()  # in seconds
-
+size = strength.GetSize()
+print(size)
 # Assign unique names to the scalar arrays
 strength.SetName("strength")
 time_.SetName("time")
