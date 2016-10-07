@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct 07 13:04:47 2016
+
+@author: rasmu
+"""
+
 # Read the CSV file and convert the latitude and longitude into x,y-coordinates into Kilometers.
 # Anders Hast 5/6-2013
 
@@ -48,14 +55,14 @@ def readPoints(file):
         # Skip the commented lines
         if data and data[0][0] != '#':
             # Convert data into float
-            print data[1], data[2], data[3], data[4], data[10].split('--')[0]
-            date, x, y, z, r = data[1].rstrip(';'), float(data[2].rstrip(';')), float(data[3].rstrip(';')),  float(data[4].rstrip(';')), float(data[10].split('--')[0])
+            #print data[1], data[2], data[3], data[4], data[10].split('--')[0]
+            date, x, y, z, r = data[1].rstrip(';'), float(data[2].rstrip(';')), float(data[3].rstrip(';')),  float(data[4].rstrip(';')), 3*float(data[10].split('--')[0])
             row=string.split(date,'T');
             adate=row[0].split('-')
             atime=row[1].split(':')
             temp=atime[2].split('.')
             atime[2]=temp[0];
-            
+            #print(adate)
             if atime[2]=='':
                 atime[2]='00'
             t= time.mktime([int(adate[0]),int(adate[1]),int(adate[2]),int(atime[0]),int(atime[1]),int(atime[2]),0,0,0])
@@ -79,7 +86,7 @@ def readPoints(file):
         # read next line
         line = file.readline()
 
-    print LatMin, LatMax, LonMin, LonMax
+    #print LatMin, LatMax, LonMin, LonMax
     # Compute the range of the data
     x1=distance(LatMin,LonMin,LatMax,LonMin)
     x2=distance(LatMin,LonMax,LatMax,LonMax)
