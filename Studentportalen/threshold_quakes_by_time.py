@@ -14,6 +14,8 @@ class KeyboardInterface(object):
 
     def __init__(self):
         self.screenshot_counter = 0
+        self.day_in_sec = 86400
+        self.day_counter = 0
         #self.level_depth = 7
         self.render_window = None
         self.window2image_filter = None
@@ -36,10 +38,18 @@ class KeyboardInterface(object):
             self.screenshot_counter += 1
 			
             
-        elif key == "Up":            
-            threshold_filter.ThresholdBetween((max_time-min_time)/3,(max_time-min_time)/2)
+        elif key == "Up":
+            self.day_counter += 1
+            print self.day_counter
+            threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
+            threshold_filter.Update()
             self.render_window.Render()
-          
+        elif key == "Down":
+            self.day_counter -= 1
+            print self.day_counter
+            threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
+            threshold_filter.Update()
+            self.render_window.Render()
             
         # elif key == "Down":
             # if self.level_depth > 1:
@@ -87,7 +97,7 @@ ColorTrans.AddRGBPoint((max_strength-min_strength)/2,1, 1, 1)
 ColorTrans.AddRGBPoint(max_strength, 0, 0, 1)
 
 outline = vtk.vtkOutlineFilter()
-outline.SetInputConnection(threshold_filter.GetOutputPort())
+outline.SetInputData(points_polydata)
 outline_mapper = vtk.vtkPolyDataMapper()
 outline_mapper.SetInputConnection(outline.GetOutputPort())
 outline_actor = vtk.vtkActor()
