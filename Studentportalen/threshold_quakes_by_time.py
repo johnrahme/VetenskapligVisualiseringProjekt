@@ -97,6 +97,42 @@ threshold_filter.ThresholdBetween(min_time, max_time)
 threshold_filter.SetInputArrayToProcess(0, 0, 0, 0, "time")
 threshold_filter.Update()
 
+#----------------------------Background stuff (not working atm) START--------------------------------
+jpegfile = "map-italy.jpg"
+ 
+ 
+# Generate an sphere polydata
+image_plane = vtk.vtkPlaneSource()
+#sphere.SetThetaResolution(12)
+#sphere.SetPhiResolution(12)
+ 
+# Read the image data from a file
+reader = vtk.vtkJPEGReader()
+reader.SetFileName(jpegfile)
+ 
+# Create texture object
+texture = vtk.vtkTexture()
+
+texture.SetInputConnection(reader.GetOutputPort())
+ 
+# Map texture coordinates
+map_to_plane = vtk.vtkTextureMapToPlane()
+
+map_to_plane.SetInputConnection(image_plane.GetOutputPort())
+#map_to_sphere.PreventSeamOn()
+ 
+# Create mapper and set the mapped texture as input
+mapper = vtk.vtkPolyDataMapper()
+
+mapper.SetInputConnection(map_to_plane.GetOutputPort())
+ 
+# Create actor and set the mapper and the texture
+image_actor = vtk.vtkActor()
+image_actor.SetMapper(mapper)
+image_actor.SetTexture(texture)
+
+#----------------------------Background stuff END-------------------------------------
+
 #-------------------------Start ColorTransfer function------------------------- 
 
 ColorTrans = vtk.vtkColorTransferFunction()
