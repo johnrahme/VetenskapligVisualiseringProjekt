@@ -1,19 +1,19 @@
 import ReadPointsCSV
 import vtk
-
+import math
 #------------------------Start KeyBoard interface------------------------------
 
 class KeyboardInterface(object):
-    global size, strength, min_strength
+    global size, min_strength
     def __init__(self):
         self.screenshot_counter = 0
         self.day_in_sec = 86400
         self.day_counter = 0        
         self.render_window = None
         self.window2image_filter = None
-        self.png_writer = None
-        self.new_strength = strength   
-        
+        self.png_writer = None   
+        self.new_strength = vtk.vtkFloatArray()
+        self.new_strength.Resize(size)
     def keypress(self, obj, event):
         key = obj.GetKeySym()
         
@@ -31,41 +31,60 @@ class KeyboardInterface(object):
         elif key == "Up":
             self.day_counter += 1
             print self.day_counter
-            threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
-            threshold_filter.Update()
+            print math.floor((max_time-min_time)/self.day_in_sec) #Last day of data
+            if self.day_counter < math.floor((max_time-min_time)/self.day_in_sec):
+                threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
+                threshold_filter.Update()
+            else:
+                self.day_counter = math.floor((max_time-min_time)/self.day_in_sec)
             self.render_window.Render()
         elif key == "Down":
             self.day_counter -= 1
             print self.day_counter
-            threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
-            threshold_filter.Update()
+            if self.day_counter > 0:
+                threshold_filter.ThresholdBetween(min_time+(self.day_counter-1)*self.day_in_sec,min_time+self.day_counter*self.day_in_sec)	
+                threshold_filter.Update()
+            else:
+                self.day_counter = 0
             self.render_window.Render()
+            
+        #Sort out values less than 7 in magnitude
         elif key == "Left":      
-            self.new_strength = strength
+            print("left")
             for index in range(size):
-                #print 'strength = ' , self.new_strength[index]
-                if self.new_strength.GetValue(index) < 7:
+                if strength.GetValue(index) < 7:
                     self.new_strength.SetValue(index,0) 
+                else:
+                    self.new_strength.SetValue(index,strength.GetValue(index))
             self.new_strength.SetName("new_strength")               
+            points_polydata.GetPointData().AddArray(self.new_strength)
             points_polydata.GetPointData().SetActiveScalars("new_strength")
+            threshold_filter.SetInputData(points_polydata)
             threshold_filter.Update()
             self.render_window.Render()
             
-        elif key == "Right":      
-            self.new_strength = strength
+            
+        #Sort out values larger than 5 in magnitude           
+        elif key == "Right":     
+            print("Right")
             for index in range(size):
-                #print 'strength = ' , self.new_strength[index]
-                if self.new_strength.GetValue(index) > 5:
+                if strength.GetValue(index) > 5:
                     self.new_strength.SetValue(index,0) 
-            self.new_strength.SetName("new_strength")               
+                else:
+                    self.new_strength.SetValue(index,strength.GetValue(index))
+            self.new_strength.SetName("new_strength")  
+            points_polydata.GetPointData().AddArray(self.new_strength)             
             points_polydata.GetPointData().SetActiveScalars("new_strength")
+            threshold_filter.SetInputData(points_polydata)
             threshold_filter.Update()
             self.render_window.Render()
             
+        #Redraw all data no matter what magnitude
         elif key == "1":      
-            self.new_strength = strength
-            self.new_strength.SetName("new_strength")               
-            points_polydata.GetPointData().SetActiveScalars("new_strength")
+            print("1")
+            points_polydata.GetPointData().AddArray(strength) 
+            points_polydata.GetPointData().SetActiveScalars("strength")
+            threshold_filter.SetInputData(points_polydata)
             threshold_filter.Update()
             self.render_window.Render()
 
