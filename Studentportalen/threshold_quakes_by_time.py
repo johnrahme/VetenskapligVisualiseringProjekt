@@ -162,11 +162,14 @@ ColorTrans.AddRGBPoint(max_strength, 0, 0, 1)
 
 #---------------------------End ColorTransfer function------------------------- 
 
+#-----------------------------Start Create glyphs for quake data---------------
 sphere = vtk.vtkSphereSource()
 
 glyph = vtk.vtkGlyph3D()
 glyph.SetInputConnection(threshold_filter.GetOutputPort())
 glyph.SetSourceConnection(sphere.GetOutputPort())
+glyph.ScalingOn()
+glyph.SetScaleFactor(5)
 
 glyph_mapper = vtk.vtkPolyDataMapper()
 glyph_mapper.SetInputConnection(glyph.GetOutputPort())

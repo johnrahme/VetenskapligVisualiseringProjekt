@@ -56,7 +56,7 @@ def readPoints(file):
         if data and data[0][0] != '#':
             # Convert data into float
             #print data[1], data[2], data[3], data[4], data[10].split('--')[0]
-            date, x, y, z, r = data[1].rstrip(';'), float(data[2].rstrip(';')), float(data[3].rstrip(';')),  float(data[4].rstrip(';')), 3*float(data[10].split('--')[0])
+            date, x, y, z, r = data[1].rstrip(';'), float(data[2].rstrip(';')), float(data[3].rstrip(';')),  float(data[4].rstrip(';')), float(data[10].split('--')[0])
             row=string.split(date,'T');
             adate=row[0].split('-')
             atime=row[1].split(':')
