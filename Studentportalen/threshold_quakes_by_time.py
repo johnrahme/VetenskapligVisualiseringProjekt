@@ -52,7 +52,7 @@ class KeyboardInterface(object):
         elif key == "Left":      
             print("left")
             for index in range(size):
-                if strength.GetValue(index) < 3:
+                if strength.GetValue(index) < 4:
                     self.new_strength.SetValue(index,0) 
                 else:
                     self.new_strength.SetValue(index,strength.GetValue(index))
@@ -68,7 +68,7 @@ class KeyboardInterface(object):
         elif key == "Right":     
             print("Right")
             for index in range(size):
-                if strength.GetValue(index) > 5:
+                if strength.GetValue(index) > 1.5:
                     self.new_strength.SetValue(index,0) 
                 else:
                     self.new_strength.SetValue(index,strength.GetValue(index))
@@ -97,7 +97,7 @@ points, strength, time_, = ReadPointsCSV.readPoints("Quake_data.txt")
 min_strength, max_strength = strength.GetRange()
 min_time, max_time = time_.GetRange()  # in seconds
 size = strength.GetSize()
-print(size)
+#print(size)
 # Assign unique names to the scalar arrays
 strength.SetName("strength")
 time_.SetName("time")
