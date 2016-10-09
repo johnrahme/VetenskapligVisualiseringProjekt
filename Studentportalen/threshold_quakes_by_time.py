@@ -52,7 +52,7 @@ class KeyboardInterface(object):
         elif key == "Left":      
             print("left")
             for index in range(size):
-                if strength.GetValue(index) < 7:
+                if strength.GetValue(index) < 3:
                     self.new_strength.SetValue(index,0) 
                 else:
                     self.new_strength.SetValue(index,strength.GetValue(index))
@@ -191,11 +191,26 @@ outline_actor.SetMapper(outline_mapper)
 
 #-------------------------End Outline------------------------------------------
 
+#-----------------------Start ColorBar-----------------------------------------
+
+ColorBar = vtk.vtkScalarBarActor()
+ColorBar.SetLookupTable(ColorTrans)
+ColorBar.SetOrientationToHorizontal()
+ColorBar.SetTitle("Quake magnitude")
+ColorBar.SetMaximumWidthInPixels(400)
+ColorBar.SetMaximumHeightInPixels(60)
+ColorBar.SetTextPosition(200)
+ColorBar.SetPosition(0.2 ,0)
+ColorBar.SetPosition2(0.7,0.1)
+
+#-----------------------End ColorBar-------------------------------------------
+
 #------------------------Start Renderer----------------------------------------
 renderer = vtk.vtkRenderer()
 renderer.SetBackground(0.1, 0.1, 0.1)
 renderer.AddActor(outline_actor)
 renderer.AddActor(glyph_actor)
+renderer.AddActor(ColorBar)
 
 # Create a render window
 render_window = vtk.vtkRenderWindow()
