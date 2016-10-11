@@ -134,9 +134,5 @@ class app_tk(Tkinter.Tk):
         #self.entry.selection_range(0,Tkinter.END)
 
         
-    
-if __name__ == "__main__":
-    app = app_tk(None)
-    app.title('GUI')
-    app.mainloop()
+
     

@@ -1,6 +1,7 @@
 import ReadPointsCSV
 import vtk
 import math
+from Tkint import  app_tk
 #------------------------Start KeyBoard interface------------------------------
 
 class KeyboardInterface(object):
@@ -149,6 +150,8 @@ mapper.SetInputConnection(map_to_plane.GetOutputPort())
 image_actor = vtk.vtkActor()
 image_actor.SetMapper(mapper)
 image_actor.SetTexture(texture)
+image_actor.SetScale(1000)	
+print image_actor.GetBounds()
 
 #----------------------------Background stuff END-------------------------------------
 
@@ -188,6 +191,8 @@ outline_mapper = vtk.vtkPolyDataMapper()
 outline_mapper.SetInputConnection(outline.GetOutputPort())
 outline_actor = vtk.vtkActor()
 outline_actor.SetMapper(outline_mapper)
+outline_actor.SetScale(1)	
+print outline_actor.GetBounds()
 
 #-------------------------End Outline------------------------------------------
 
@@ -211,6 +216,7 @@ renderer.SetBackground(0.1, 0.1, 0.1)
 renderer.AddActor(outline_actor)
 renderer.AddActor(glyph_actor)
 renderer.AddActor(ColorBar)
+renderer.AddActor(image_actor)
 
 # Create a render window
 render_window = vtk.vtkRenderWindow()
@@ -243,7 +249,11 @@ interactor.AddObserver("KeyPressEvent", keyboard_interface.keypress)
 # Initialize the interactor and start the rendering loop
 interactor.Initialize()
 render_window.Render()
-interactor.Start()
+app = app_tk(None)
+app.title('GUI')
+while(1):
+    app.update()
+
 
 
 #--------------------------End Renderer----------------------------------------
