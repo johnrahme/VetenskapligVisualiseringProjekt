@@ -141,10 +141,10 @@ class app_tk(Tkinter.Tk):
         t2.grid(column=1, row=1)
         
         self.Opacity = Tkinter.DoubleVar() #max_time
-        t3 = Tkinter.Scale(self,label="Opacity" ,variable = self.Opacity, from_=0,to=1,tickinterval=0.1, length=200, orient = 'horizontal',resolution=0.1)
+        t3 = Tkinter.Scale(self,label="Opacity" ,variable = self.Opacity, from_=0,to=1,tickinterval=0.25, length=200, orient = 'horizontal',resolution=0.01)
         t3.set(0.5)
         t3.pack()
-        t3.grid(column=3, row=1)
+        t3.grid(column=2, row=1)
         
         
         button1 = Tkinter.Button(self,text="Update opacity of map in render window", 
