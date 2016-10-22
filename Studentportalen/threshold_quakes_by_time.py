@@ -243,43 +243,6 @@ threshold_filter.ThresholdBetween(min_time, max_time)
 threshold_filter.SetInputArrayToProcess(0, 0, 0, 0, "time")
 threshold_filter.Update()
 
-#----------------------------Background stuff (not working atm) START--------------------------------
-jpegfile = "map-italy.jpg"
- 
- 
-# Generate an sphere polydata
-image_plane = vtk.vtkPlaneSource()
-#sphere.SetThetaResolution(12)
-#sphere.SetPhiResolution(12)
- 
-# Read the image data from a file
-reader = vtk.vtkJPEGReader()
-reader.SetFileName(jpegfile)
- 
-# Create texture object
-texture = vtk.vtkTexture()
-
-texture.SetInputConnection(reader.GetOutputPort())
- 
-# Map texture coordinates
-map_to_plane = vtk.vtkTextureMapToPlane()
-
-map_to_plane.SetInputConnection(image_plane.GetOutputPort())
-#map_to_sphere.PreventSeamOn()
- 
-# Create mapper and set the mapped texture as input
-mapper = vtk.vtkPolyDataMapper()
-
-mapper.SetInputConnection(map_to_plane.GetOutputPort())
- 
-# Create actor and set the mapper and the texture
-image_actor = vtk.vtkActor()
-image_actor.SetMapper(mapper)
-image_actor.SetTexture(texture)
-image_actor.SetScale(1000)	
-print image_actor.GetBounds()
-
-#----------------------------Background stuff END-------------------------------------
 
 #-------------------------Start ColorTransfer function------------------------- 
 
@@ -317,10 +280,58 @@ outline_mapper = vtk.vtkPolyDataMapper()
 outline_mapper.SetInputConnection(outline.GetOutputPort())
 outline_actor = vtk.vtkActor()
 outline_actor.SetMapper(outline_mapper)
-outline_actor.SetScale(1)	
+outline_actor.SetScale(1)
+xmi, xma, ymi, yma, zmi, zma = outline_actor.GetBounds()
 print outline_actor.GetBounds()
 
 #-------------------------End Outline------------------------------------------
+
+
+#----------------------------Background stuff START--------------------------------
+jpegfile = "map-italy.jpg"
+ 
+ 
+# Generate an sphere polydata
+image_plane = vtk.vtkPlaneSource()
+#sphere.SetThetaResolution(12)
+#sphere.SetPhiResolution(12)
+ 
+# Read the image data from a file
+reader = vtk.vtkJPEGReader()
+reader.SetFileName(jpegfile)
+ 
+# Create texture object
+texture = vtk.vtkTexture()
+
+transform = vtk.vtkTransform()
+transform.RotateWXYZ(180,0,1,0)
+transform.RotateWXYZ(90,0,0,1)
+
+texture.SetTransform(transform)
+
+texture.SetInputConnection(reader.GetOutputPort())
+ 
+# Map texture coordinates
+map_to_plane = vtk.vtkTextureMapToPlane()
+
+map_to_plane.SetInputConnection(image_plane.GetOutputPort())
+#map_to_sphere.PreventSeamOn()
+ 
+# Create mapper and set the mapped texture as input
+mapper = vtk.vtkPolyDataMapper()
+
+mapper.SetInputConnection(map_to_plane.GetOutputPort())
+ 
+# Create actor and set the mapper and the texture
+image_actor = vtk.vtkActor()
+image_actor.SetMapper(mapper)
+image_actor.SetTexture(texture)
+scalingFactor = 1200
+image_actor.SetOrigin(-xma/2/scalingFactor,-yma/2/scalingFactor,0)
+image_actor.SetScale(scalingFactor)
+print image_actor.GetBounds()
+
+#----------------------------Background stuff END-------------------------------------
 
 #-----------------------Start ColorBar-----------------------------------------
 
@@ -342,7 +353,7 @@ renderer.SetBackground(0.1, 0.1, 0.1)
 renderer.AddActor(outline_actor)
 renderer.AddActor(glyph_actor)
 renderer.AddActor(ColorBar)
-#renderer.AddActor(image_actor)
+renderer.AddActor(image_actor)
 
 # Create a render window
 render_window = vtk.vtkRenderWindow()
