@@ -1,7 +1,8 @@
 import ReadPointsCSV
 import vtk
 import math
-from Tkint import  app_tk
+import Tkinter
+#from Tkint import  app_tk
 #------------------------Start KeyBoard interface------------------------------
 
 class KeyboardInterface(object):
@@ -90,6 +91,131 @@ class KeyboardInterface(object):
             self.render_window.Render()
 
 #--------------------------End KeyBoard interface------------------------------
+
+#--------------------------GUI start-------------------------------------------
+
+class app_tk(Tkinter.Tk):
+    global min_time, max_time, min_strenght, max_strength, size
+    
+    def __init__(self, parent):
+        Tkinter.Tk.__init__(self,parent)
+        self.parent = parent
+        self.running = None
+        self.day_in_sec = 86400
+        self.day_counter = 0  
+        self.initialize()    
+        self.new_strength = vtk.vtkFloatArray()
+        self.new_strength.Resize(size)
+        
+    def initialize(self):
+        self.grid()
+        
+        self.entryVariable = Tkinter.StringVar()
+        self.entry = Tkinter.Entry(self, textvariable=self.entryVariable)
+#        self.entry.grid(column=3, row=2)
+#        self.entry.bind("<Return>", self.OnPressEnter)
+#        self.entryVariable.set(u"Enter text here")
+        
+        self.EndMagnitude = Tkinter.DoubleVar()
+        Magmax = Tkinter.Scale(self,label="Maximum magnitude", variable = self.EndMagnitude ,from_=max_strength,to=min_strength,tickinterval=1,resolution=0.1, orient ='vertical')
+        Magmax.set(max_strength)
+        Magmax.pack()
+        Magmax.grid(column=3, row=0)
+        
+        self.StartMagnitude = Tkinter.DoubleVar() #min_strength
+        Magmin = Tkinter.Scale(self,label="Lowest magnitude",variable = self.StartMagnitude, from_=max_strength,to=min_strength,tickinterval=1,resolution=0.1,orient ='vertical')
+        Magmin.set(0)
+        Magmin.pack()
+        Magmin.grid(column=2, row=0)
+        
+        self.StartTime = Tkinter.DoubleVar() #min_time
+        t1 = Tkinter.Scale(self,label="Start time",variable = self.StartTime, from_=0,to=math.floor((max_time-min_time)/self.day_in_sec),tickinterval=50, length=300, orient = 'horizontal')
+        t1.set(0)
+        t1.pack()
+        t1.grid(column=1, row=0)
+        
+        self.EndTime = Tkinter.DoubleVar() #max_time
+        t2 = Tkinter.Scale(self,label="End time",variable = self.EndTime, from_=0,to=math.floor((max_time-min_time)/self.day_in_sec),tickinterval=50, length=300, orient = 'horizontal')
+        t2.set(math.floor((max_time-min_time)/self.day_in_sec))
+        t2.pack()
+        t2.grid(column=1, row=1)
+        
+        self.Opacity = Tkinter.DoubleVar() #max_time
+        t2 = Tkinter.Scale(self,label="Opacity" ,variable = self.Opacity, from_=0,to=100,tickinterval=10, length=200, orient = 'horizontal')
+        t2.set(100)
+        t2.pack()
+        t2.grid(column=1, row=1)
+        
+        
+        button1 = Tkinter.Button(self,text="Update opacity of map in render window", 
+                                 command=self.OnMapClick)
+        button1.grid(column=1, row=2)
+
+       
+        button4 = Tkinter.Button(self,text="Update time in render window", 
+                                 command=self.OnTimeClick)
+        button4.grid(column=1, row=3)
+        
+        
+        button5 = Tkinter.Button(self,text="Update Magnitude in render window", 
+                                 command=self.OnMagnitudeClick)
+        button5.grid(column=1, row=4)
+    
+        self.labelVariable = Tkinter.StringVar()
+        label = Tkinter.Label(self, textvariable = self.labelVariable, 
+                              anchor="w", fg="white", bg="black")
+        label.grid(column=3, row=3, columnspan=2, sticky='WE')
+        self.labelVariable.set(u"Information")
+        
+        self.grid_columnconfigure(0,weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.resizable(True,True)
+        self.update()
+        self.geometry(self.geometry())
+        self.entry.focus_set()
+        self.entry.selection_range(0, Tkinter.END)
+        
+    def OnMapClick(self):
+        self.labelVariable.set("(Map)")
+        self.entry.focus_set()
+        self.entry.selection_range(0,Tkinter.END)
+        
+
+    
+    def OnTimeClick(self):
+        self.labelVariable.set(str(self.StartTime.get()) + str(",") + str(self.EndTime.get()) + "(Time in days)")
+        self.entry.focus_set()
+        self.entry.selection_range(0,Tkinter.END)
+        threshold_filter.ThresholdBetween(min_time + (self.StartTime.get()-1)*self.day_in_sec,min_time+self.EndTime.get()*self.day_in_sec)	
+        threshold_filter.Update()
+        render_window.Render()
+        
+    
+    def OnMagnitudeClick(self):
+        #self.labelVariable.set(variablemin, variablemax, "(Magnitude)")
+        
+        self.labelVariable.set(str(self.StartMagnitude.get()) + str(",") + str(self.EndMagnitude.get()) + "(Magnitude (min,max))")      
+        self.entry.focus_set()
+        self.entry.selection_range(0,Tkinter.END)
+        for index in range(size):
+            if (strength.GetValue(index) < self.StartMagnitude.get()) or (strength.GetValue(index) > self.EndMagnitude.get()):
+                self.new_strength.SetValue(index,0) 
+            else:
+                self.new_strength.SetValue(index,strength.GetValue(index))
+        self.new_strength.SetName("new_strength")               
+        points_polydata.GetPointData().AddArray(self.new_strength)
+        points_polydata.GetPointData().SetActiveScalars("new_strength")
+        threshold_filter.SetInputData(points_polydata)
+        threshold_filter.Update()
+        render_window.Render()
+
+    def OnPressEnter(self,event):
+        self.labelVariable.set(self.entryVariable.get()+ "(You pressed Enter)")
+        #self.entry.focus_set()
+        #self.entry.selection_range(0,Tkinter.END)
+ 
+ #--------------------------------GUI end--------------------------------------
+
 
 #-----------------------Start Create quake glyphs------------------------------
 
@@ -216,7 +342,7 @@ renderer.SetBackground(0.1, 0.1, 0.1)
 renderer.AddActor(outline_actor)
 renderer.AddActor(glyph_actor)
 renderer.AddActor(ColorBar)
-renderer.AddActor(image_actor)
+#renderer.AddActor(image_actor)
 
 # Create a render window
 render_window = vtk.vtkRenderWindow()
@@ -254,6 +380,6 @@ app.title('GUI')
 while(1):
     app.update()
 
-
+#,min_time,max_time,min_strength,max_strength
 
 #--------------------------End Renderer----------------------------------------
