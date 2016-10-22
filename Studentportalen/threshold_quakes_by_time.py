@@ -39,6 +39,20 @@ class KeyboardInterface(object):
                 threshold_filter.Update()
             else:
                 self.day_counter = math.floor((max_time-min_time)/self.day_in_sec)
+            month = "June"
+            day = 29+self.day_counter
+            if self.day_counter>2 and self.day_counter<34:
+                month = "July"
+                day = self.day_counter-2
+            elif self.day_counter>33 and self.day_counter<65:
+                month = "August"
+                day = self.day_counter-33
+            elif self.day_counter > 64:
+                month = "September"
+                day = self.day_counter-64
+            txt.SetInput(str(day) + " of "  +month)
+				
+				
             self.render_window.Render()
         elif key == "Down":
             self.day_counter -= 1
@@ -49,6 +63,18 @@ class KeyboardInterface(object):
             else:
                 self.day_counter = 0
             self.render_window.Render()
+            month = "June"
+            day = 29+self.day_counter
+            if self.day_counter>2 and self.day_counter<34:
+                month = "July"
+                day = self.day_counter-2
+            elif self.day_counter>33 and self.day_counter<65:
+                month = "August"
+                day = self.day_counter-33
+            elif self.day_counter > 64:
+                month = "September"
+                day = self.day_counter-64
+            txt.SetInput(str(day) + " of "  +month)
             
         #Sort out values less than 7 in magnitude
         elif key == "Left":      
@@ -290,6 +316,15 @@ print outline_actor.GetBounds()
 
 #-------------------------End Outline------------------------------------------
 
+#-------------------------Text field START-------------------------------------
+txt = vtk.vtkTextActor()
+txt.SetInput("All values")
+txtprop=txt.GetTextProperty()
+txtprop.SetFontFamilyToArial()
+txtprop.SetFontSize(25)
+txt.SetDisplayPosition(250,450)
+
+#-------------------------Text field END-------------------------------------
 
 #----------------------------Background stuff START--------------------------------
 jpegfile = "map-italy.jpg"
@@ -359,6 +394,7 @@ renderer.AddActor(outline_actor)
 renderer.AddActor(glyph_actor)
 renderer.AddActor(ColorBar)
 renderer.AddActor(image_actor)
+renderer.AddActor(txt)
 
 # Create a render window
 render_window = vtk.vtkRenderWindow()
