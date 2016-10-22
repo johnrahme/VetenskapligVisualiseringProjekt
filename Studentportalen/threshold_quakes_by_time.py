@@ -141,10 +141,10 @@ class app_tk(Tkinter.Tk):
         t2.grid(column=1, row=1)
         
         self.Opacity = Tkinter.DoubleVar() #max_time
-        t2 = Tkinter.Scale(self,label="Opacity" ,variable = self.Opacity, from_=0,to=100,tickinterval=10, length=200, orient = 'horizontal')
-        t2.set(100)
-        t2.pack()
-        t2.grid(column=1, row=1)
+        t3 = Tkinter.Scale(self,label="Opacity" ,variable = self.Opacity, from_=0,to=1,tickinterval=0.1, length=200, orient = 'horizontal',resolution=0.1)
+        t3.set(0.5)
+        t3.pack()
+        t3.grid(column=3, row=1)
         
         
         button1 = Tkinter.Button(self,text="Update opacity of map in render window", 
@@ -176,9 +176,13 @@ class app_tk(Tkinter.Tk):
         self.entry.selection_range(0, Tkinter.END)
         
     def OnMapClick(self):
-        self.labelVariable.set("(Map)")
+        self.labelVariable.set("Opacity: "+ str(self.Opacity.get()))
+        image_actor.GetProperty().SetOpacity(self.Opacity.get())
         self.entry.focus_set()
         self.entry.selection_range(0,Tkinter.END)
+        threshold_filter.Update()
+        render_window.Render()
+        
         
 
     
@@ -329,6 +333,7 @@ image_actor.SetTexture(texture)
 scalingFactor = 1200
 image_actor.SetOrigin(-xma/2/scalingFactor,-yma/2/scalingFactor,0)
 image_actor.SetScale(scalingFactor)
+image_actor.GetProperty().SetOpacity(0.5)
 print image_actor.GetBounds()
 
 #----------------------------Background stuff END-------------------------------------
