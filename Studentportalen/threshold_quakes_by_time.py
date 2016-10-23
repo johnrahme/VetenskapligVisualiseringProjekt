@@ -279,7 +279,7 @@ threshold_filter.Update()
 ColorTrans = vtk.vtkColorTransferFunction()
 ColorTrans.SetColorSpaceToRGB()
 ColorTrans.AddRGBPoint(min_strength, 1, 0, 0)
-ColorTrans.AddRGBPoint((max_strength-min_strength)/2,1, 1, 1)
+ColorTrans.AddRGBPoint((max_strength-min_strength)/2,1, 1, 0)
 ColorTrans.AddRGBPoint(max_strength, 0, 0, 1)
 
 #---------------------------End ColorTransfer function------------------------- 
